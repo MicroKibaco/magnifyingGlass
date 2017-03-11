@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>放大镜</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+
+            vertical-align: top;
+
+        }
+
+        .box {
+            width: 350px;
+            height: 350px;
+            margin: 100px;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .big {
+            width: 450px;
+            height: 450px;
+            top: 0;
+            left: 360px;
+            position: absolute;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            display: none;
+        }
+
+        .small {
+            position: relative;
+        }
+
+        .mask {
+            display: none;
+            width: 100px;
+            cursor: move;
+            height: 100px;
+            top: 0;
+            left: 0;
+            position: absolute;
+            background: rgba(255, 255, 0, 0.4);
+        }
+
+        .big img {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="box" id="fdj">
+
+    <!--小盒子-->
+    <div class="small">
+        <img src="images/001.jpg">
+        <div class="mask"></div>
+    </div>
+
+    <!--放大镜盒子-->
+    <div class="big">
+        <img src="images/0001.jpg">
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+
+    var fdj = document.getElementById("fdj");
+    var small = fdj.children[0]; // 获取小盒子图片
+    var big = fdj.children[1]; // 获取大盒子 800 图片
+    var mask = small.children[1]; // 获取蒙层 图片的盒子
+    var bigimg = big.children[0]; // 获得大盒子的图片
+
+    small.onmouseover = function () {
+
+        mask.style.display = "block";
+        big.style.display = "block";
+
+    };
+
+    small.onmouseout = function () {
+        mask.style.display = "none";
+        big.style.display = "none";
+    };
+
+    // 鼠标在small里面移动
+    var x = 0, y = 0;
+
+    small.onmousemove = function (event) {
+        var event = event || window.event;
+
+        // 孩子有定位 所有获取到父亲的offsetwidth值
+        x = event.clientX - this.offsetParent.offsetLeft - mask.offsetWidth / 2;
+        y = event.clientY - this.offsetParent.offsetTop - mask.offsetHeight / 2;
+
+        if (x < 0) {
+
+            x = 0;
+
+        } else if (x > small.offsetWidth - mask.offsetWidth) {
+
+            x = small.offsetWidth - mask.offsetWidth;
+
+        }
+
+        if (y < 0) {
+
+            y = 0;
+
+        } else if (y > small.offsetHeight - mask.offsetHeight) {
+
+            y = small.offsetHeight - mask.offsetHeight;
+
+        }
+
+        // 确定蒙层的距离父亲的左边距和上边距
+        mask.style.left = x + "px";
+        mask.style.top = y + "px";
+
+        // 大盒子 / 小盒子 = 倍数
+        // 小图的距离 * 倍数 == 大图的距离
+        bigimg.style.left = -x * bigimg.offsetWidth / small.offsetWidth + "px";
+        bigimg.style.top = -y * bigimg.offsetHeight / small.offsetHeight + "px";
+
+    }
+
+</script>
